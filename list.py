@@ -21,9 +21,9 @@ class LocationParser(HTMLParser):
             if location_id not in allowed_ids:
                 return
             try:
-                os.stat('static/' + location_id)
+                os.stat('public/' + location_id)
             except:
-                os.mkdir('static/' + location_id)
+                os.mkdir('public/' + location_id)
             # get the files
             files = {'/index.html', '/durchfluss.png', '/wasserstand.png'}
             for f in files:
@@ -34,7 +34,7 @@ class LocationParser(HTMLParser):
                     pass
                 else:
                     content = response.read()
-                    newfile = open('static/' + location_id + f, "w")
+                    newfile = open('public/' + location_id + f, "w")
                     newfile.write(content)
 
     def handle_endtag(self, tag):
