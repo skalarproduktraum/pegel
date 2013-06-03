@@ -1,4 +1,5 @@
 from HTMLParser import HTMLParser
+from apscheduler.scheduler import Scheduler
 import urllib2
 import os
 
@@ -7,6 +8,7 @@ import os
 allowed_ids = ['501060', '501010', '501080']
 
 basepath = 'http://www.umwelt.sachsen.de/de/wu/umwelt/lfug/lfug-internet/hwz'
+sched = Scheduler()
 
 class LocationParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
@@ -19,9 +21,9 @@ class LocationParser(HTMLParser):
             if location_id not in allowed_ids:
                 return
             try:
-                os.stat(location_id)
+                os.stat('static/' + location_id)
             except:
-                os.mkdir(location_id)
+                os.mkdir('static/' + location_id)
             # get the files
             files = {'/index.html', '/durchfluss.png', '/wasserstand.png'}
             for f in files:
@@ -32,7 +34,7 @@ class LocationParser(HTMLParser):
                     pass
                 else:
                     content = response.read()
-                    newfile = open(location_id + f, "w")
+                    newfile = open('static/' + location_id + f, "w")
                     newfile.write(content)
 
     def handle_endtag(self, tag):
@@ -40,6 +42,7 @@ class LocationParser(HTMLParser):
     def handle_data(self, data):
         pass
 
+@sched.interval_schedule(minutes=20)
 def main():
     parser = LocationParser()
     try:
@@ -52,4 +55,8 @@ def main():
         # try again later...
     else:
        parser.feed(html)
-if __name__ == '__main__': main()
+
+pass
+
+while True:
+    pass
